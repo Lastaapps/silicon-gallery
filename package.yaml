@@ -22,6 +22,8 @@ dependencies:
 - text
 - bytestring
 - time
+- scalpel
+- http-client
 
 library:
   source-dirs: src
