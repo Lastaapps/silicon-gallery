@@ -14,6 +14,19 @@ and send them to a Discord channel.
 - repeat every n minutes
 - build on CI
 
+## Used extensions
+
+```haskell
+{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE OverloadedRecordDot #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE RecordWildCards #-}
+```
+
 ## License
 
 Silicon Gallery is licensed under the `GNU GPL v3.0` license.

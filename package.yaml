@@ -24,6 +24,7 @@ dependencies:
 - time
 - scalpel
 - http-client
+- directory
 
 library:
   source-dirs: src
