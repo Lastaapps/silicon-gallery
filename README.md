@@ -14,17 +14,22 @@ and send them to a Discord channel.
 - repeat every n minutes
 - build on CI
 
-## Used extensions
+## Used Haskell language extensions
 
 ```haskell
-{-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE GADTs #-}
-{-# LANGUAGE OverloadedRecordDot #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RankNTypes #-}
-{-# LANGUAGE RecordWildCards #-}
+-- Have to be added
+{-# LANGUAGE DeriveDataTypeable #-} -- Allows automatic derivation of the `Data` and `Typeable` type classes.
+{-# LANGUAGE DeriveGeneric #-}      -- Allows automatic derivation of the `Generic` type class.
+{-# LANGUAGE GADTs #-}              -- Extends Haskell's type system to allow Generalized Algebraic Data Types.
+{-# LANGUAGE OverloadedStrings #-}   -- Allows string literals to be interpreted as instances of `IsString`.
+{-# LANGUAGE RankNTypes #-}         -- Allows quantification of types at arbitrary positions (rank-N types).
+
+-- Enabled globally
+{-# LANGUAGE DuplicateRecordFields #-} -- Allows record fields with the same name in different data types.
+{-# LANGUAGE OverloadedRecordDot #-} -- Enables accessing record fields using the dot notation (e.g., `record.field`).
+{-# LANGUAGE RecordWildCards #-}     -- Allows all fields of a record to be brought into scope without listing them individually.
+{-# LANGUAGE NamedFieldPuns #-}      -- Allows pattern matching on specific record fields by name, even if others are present.
+{-# LANGUAGE MultiParamTypeClasses #-} -- Enables type classes to have more than one type parameter.
 ```
 
 ## License

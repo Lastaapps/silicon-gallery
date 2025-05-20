@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-
 -- | Modules store information about posted albums.
 -- | A list of event IDs is stored in a file.
 -- | This does not scale, but for our use case this is fine
@@ -16,6 +14,7 @@ import Model (EventID (..))
 import System.Directory
 
 newtype FileConfig = FileConfig {filepath :: String}
+  deriving (Show, Read, Eq)
 
 -- | Creates a config from a file path
 createConfig :: String -> FileConfig
@@ -23,7 +22,7 @@ createConfig = FileConfig
 
 -- | Gets the latest posted event ID if available
 getPostedEvents :: FileConfig -> IO (Outcome (Set EventID))
-getPostedEvents (FileConfig {filepath = filepath}) = do
+getPostedEvents (FileConfig {filepath}) = do
   mcontent <- readFileOrNothing filepath
   case mcontent of
     Nothing -> return $ Right empty
@@ -41,7 +40,7 @@ readFileOrNothing filepath = do
 
 -- | Stores the latest event ID
 storePostedEvent :: FileConfig -> EventID -> IO (Outcome ())
-storePostedEvent (FileConfig {filepath = filepath}) event = do
+storePostedEvent (FileConfig {filepath}) event = do
   res <- appendFile filepath $ id ++ "\n"
   return $ Right res
   where

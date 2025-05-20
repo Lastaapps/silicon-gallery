@@ -25,9 +25,16 @@ dependencies:
 - scalpel
 - http-client
 - directory
+- random
 
 library:
   source-dirs: src
+  default-extensions:
+    - DuplicateRecordFields
+    - OverloadedRecordDot
+    - RecordWildCards
+    - NamedFieldPuns
+    - MultiParamTypeClasses
 
 executables:
   silicon-gallery:
@@ -37,6 +44,7 @@ executables:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    - -Wall
     # - -O0 # 7.1 7.4 7.9
     dependencies:
     - silicon-gallery
