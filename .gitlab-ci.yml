@@ -1,0 +1,24 @@
+image: haskell:9.8.4
+
+variables:
+  STACK_ROOT: "${CI_PROJECT_DIR}/.stack"
+
+cache:
+  paths:
+    - .stack
+    - .stack-work
+    - target
+
+stages:
+  - test
+  - haddock
+
+test:
+  stage: test
+  script:
+    - stack test --system-ghc
+
+haddock:
+  stage: haddock
+  script:
+    - stack haddock
