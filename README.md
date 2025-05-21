@@ -15,10 +15,6 @@ and send them to a Discord channel.
 - repeat every n minutes
 - build on CI
 
-## TODO
-- use `req` for fetching HTML
-- support rate limiting
-
 ## Notable Haskell features
 
 - Combined Monad types using `ExceptT`

@@ -59,7 +59,7 @@ spec = do
         Left err -> fail (show err)
         Right res -> do
           res `shouldSatisfy` (\x -> Data.List.length x >= 305)
-    xit "live data" $ do
+    it "live data" $ do
       scraped <- runExceptT scrapeWeb
       case scraped of
         Left err -> fail (show err)
