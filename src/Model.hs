@@ -3,7 +3,17 @@
 {-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE RankNTypes #-}
 
-module Model (EventName (..), EventImage (..), EventLink (..), Event (..), EventID (..)) where
+module Model
+  ( EventName (..),
+    EventImage (..),
+    EventLink (..),
+    Event (..),
+    EventID (..),
+    toID,
+  )
+where
+
+import Data.Text as T
 
 newtype EventName = EventName String
   deriving (Show, Read, Eq, Ord)

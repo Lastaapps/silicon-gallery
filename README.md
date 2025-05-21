@@ -5,6 +5,7 @@ by [Silicon Hill](https://www.siliconhill.cz/photogalleries)
 and send them to a Discord channel.
 
 ## Implementation milestones
+
 - read configuration from environment variables
 - fetch HTML
 - parse HTML (using a library) and extract models
@@ -13,6 +14,18 @@ and send them to a Discord channel.
 - File IO - store that a new album was just posted
 - repeat every n minutes
 - build on CI
+
+## TODO
+- use `req` for fetching HTML
+- support rate limiting
+
+## Notable Haskell features
+
+- Combined Monad types using `ExceptT`
+- Http requests using `req` library
+- Tests using `HSpec` and docs with `Haddock`
+- IO monad everywhere
+- and more...
 
 ## Used Haskell language extensions
 

@@ -3,7 +3,10 @@
 module SHScraper (scrapeWeb, scrapeHtml) where
 
 import Control.Applicative ((<|>))
-import Error (Error (ParseHtmlFailed), Outcome)
+import Control.Monad.Except (liftEither)
+import Control.Monad.IO.Class (MonadIO (liftIO))
+import qualified Data.List
+import Error (Error (ParseHtmlFailed), Outcome, OutcomeIO)
 import Model (Event (Event), EventImage (..), EventLink (..), EventName (..))
 import Text.HTML.Scalpel
 import Util (toOutcome)
@@ -15,10 +18,10 @@ import Util (toOutcome)
 url :: String
 url = "http://www.siliconhill.cz/photogalleries"
 
-scrapeWeb :: IO (Outcome [Event])
+scrapeWeb :: OutcomeIO [Event]
 scrapeWeb = do
-  content <- scrapeURL url content
-  return $ toOutcome (ParseHtmlFailed Nothing) content
+  content <- liftIO $ scrapeURL url content
+  liftEither $ toOutcome (ParseHtmlFailed Nothing) content
 
 scrapeHtml :: String -> Outcome [Event]
 scrapeHtml html =

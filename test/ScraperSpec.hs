@@ -1,9 +1,9 @@
 {-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module ScraperSpec where
 
+import Control.Monad.Except (runExceptT)
 import Data.List
 import qualified Data.Map as Map
 import Error (Error (ParseHtmlFailed))
@@ -60,7 +60,7 @@ spec = do
         Right res -> do
           res `shouldSatisfy` (\x -> Data.List.length x >= 305)
     xit "live data" $ do
-      scraped <- scrapeWeb
+      scraped <- runExceptT scrapeWeb
       case scraped of
         Left err -> fail (show err)
         Right res -> do

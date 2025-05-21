@@ -5,11 +5,12 @@
 -- | e.g. 334-4-blokove-hry-ls25
 module FileStorage (FileConfig, createConfig, getPostedEvents, storePostedEvent) where
 
+import Control.Monad.IO.Class (MonadIO (liftIO))
 import qualified Data.IntMap as Set
 import qualified Data.List
 import Data.Set (Set, empty, fromList)
 import qualified Data.String as String
-import Error (Outcome)
+import Error (Outcome, OutcomeIO)
 import Model (EventID (..))
 import System.Directory
 
@@ -21,15 +22,15 @@ createConfig :: String -> FileConfig
 createConfig = FileConfig
 
 -- | Gets the latest posted event ID if available
-getPostedEvents :: FileConfig -> IO (Outcome (Set EventID))
+getPostedEvents :: FileConfig -> OutcomeIO (Set EventID)
 getPostedEvents (FileConfig {filepath}) = do
-  mcontent <- readFileOrNothing filepath
+  mcontent <- liftIO $ readFileOrNothing filepath
   case mcontent of
-    Nothing -> return $ Right empty
+    Nothing -> return empty
     Just content -> do
       let lines = String.lines content
       let valid = Data.List.filter (/= "") lines
-      return $ Right $ fromList $ fmap EventID valid
+      return $ fromList $ fmap EventID valid
 
 readFileOrNothing :: String -> IO (Maybe String)
 readFileOrNothing filepath = do
@@ -39,9 +40,8 @@ readFileOrNothing filepath = do
     else return Nothing
 
 -- | Stores the latest event ID
-storePostedEvent :: FileConfig -> EventID -> IO (Outcome ())
+storePostedEvent :: FileConfig -> EventID -> OutcomeIO ()
 storePostedEvent (FileConfig {filepath}) event = do
-  res <- appendFile filepath $ id ++ "\n"
-  return $ Right res
+  liftIO $ appendFile filepath $ id ++ "\n"
   where
     EventID id = event
