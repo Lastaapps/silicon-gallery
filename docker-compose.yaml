@@ -1,0 +1,6 @@
+
+services:
+  silicon-gallery:
+    build: .
+    env_file:
+      - .env
