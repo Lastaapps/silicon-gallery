@@ -3,6 +3,7 @@ module Error (Error (..), Outcome, OutcomeIO, errorMessage) where
 import Control.Monad.Except
 import Network.HTTP.Req
 
+-- | Error type for the whole application
 data Error
   = ParseHtmlFailed {html :: Maybe String}
   | MissingEvironmentVariable {variableName :: String}
@@ -10,6 +11,7 @@ data Error
   | CannotSendDiscordMessage {httpException :: HttpException}
   deriving (Show)
 
+-- HttpException does not implement Eq, so we have to do it ourselves
 instance Eq Error where
   (==) ParseHtmlFailed {html = html1} ParseHtmlFailed {html = html2} = html1 == html2
   (==) MissingEvironmentVariable {variableName = variableName1} MissingEvironmentVariable {variableName = variableName2} = variableName1 == variableName2
@@ -21,6 +23,7 @@ type Outcome = Either Error
 
 type OutcomeIO a = ExceptT Error IO a
 
+-- Convert an error to its appropriate error message
 errorMessage :: Error -> String
 errorMessage ParseHtmlFailed {html = html} = "Failed to parse HTML: " ++ show html
 errorMessage MissingEvironmentVariable {variableName = variableName} = "Missing environment variable: " ++ variableName

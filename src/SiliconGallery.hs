@@ -23,36 +23,7 @@ import FileStorage (getPostedEvents, storePostedEvent)
 import Model (Event (..), EventImage (EventImage), EventLink (EventLink), EventName (EventName), toID)
 import SHScraper (scrapeWeb)
 
-baseUrl :: T.Text
-baseUrl = "https://www.siliconhill.cz"
-
-eventToMessage :: Model.Event -> DiscordMessage
-eventToMessage event =
-  DiscordMessage
-    { content = Nothing,
-      tts = Just False,
-      embeds =
-        Just
-          [ Embed
-              { title = Just $ T.pack name,
-                description = Nothing,
-                url = Just $ baseUrl <> T.pack link,
-                timestamp = Nothing,
-                color = Just 0xDA251D, -- Silicon Hill's red
-                footer = Just (EmbedFooter "Fotogalerie Sillicon Hillu" Nothing Nothing),
-                image = Just (EmbedImage (baseUrl <> T.pack image) Nothing Nothing Nothing),
-                thumbnail = Nothing,
-                author = Just (EmbedAuthor "Silicon Gallery" (Just baseUrl) Nothing Nothing),
-                fields = Nothing
-              }
-          ]
-    }
-  where
-    EventName name = event.name
-    EventLink link = event.link
-    EventImage image = event.image
-
--- | Main function to demonstrate sending a Discord message.
+-- | Main application entry point
 mainImpl :: OutcomeIO ()
 mainImpl = do
   liftIO $ putStrLn "Starting..."

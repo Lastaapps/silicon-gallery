@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeApplications #-}
 
-module Discord (sendDiscordMessage) where
+module Discord (sendDiscordMessage, eventToMessage) where
 
 import Control.Arrow
 import Control.Concurrent (threadDelay)
@@ -15,10 +15,12 @@ import qualified Data.Text as T
 import Data.Text.Encoding (encodeUtf8)
 import qualified Data.Text.Encoding as T
 import qualified Data.Text.IO as TIO
-import DiscordModel (DiscordBotToken, DiscordChannelID, DiscordMessage (..))
+import DiscordModel
 import qualified DiscordModel
 import Error (Error (..), OutcomeIO)
 import GHC.Generics (Generic)
+import Model
+import qualified Model
 import Network.HTTP.Client (HttpException (HttpExceptionRequest), HttpExceptionContent (StatusCodeException), Response (responseHeaders))
 import Network.HTTP.Req
 import Util (domainWithPath)
@@ -46,6 +48,8 @@ sendDiscordMessage botToken channelID message = do
   result2 <- liftIO result
   liftEither $ left (\x -> CannotSendDiscordMessage {httpException = x}) result2
 
+-- | Handle bad responses from Discord due rate limits -
+-- otherwise, we post as fast possible
 runReqRateLimiting :: HttpConfig -> Req a -> IO a
 runReqRateLimiting config req = do
   result <- try (runReq config req)
@@ -58,6 +62,8 @@ runReqRateLimiting config req = do
     Right val ->
       pure val
 
+-- | Checks if the caught exception is a rate limit exception and retries
+-- if needed
 handleRateLimitException :: HttpConfig -> Req a -> Response () -> IO a
 handleRateLimitException config req resp = do
   case lookup "X-RateLimit-Reset-After" (responseHeaders resp) of
@@ -75,3 +81,33 @@ handleRateLimitException config req resp = do
     Nothing ->
       -- If `X-RateLimit-Reset-After` header is missing, re-throw original exception
       throwIO $ VanillaHttpException (HttpExceptionRequest (error "Original request info lost") (StatusCodeException resp B.empty))
+
+baseUrl :: T.Text
+baseUrl = "https://www.siliconhill.cz"
+
+-- | Converts Event to `DiscordMessage`
+eventToMessage :: Model.Event -> DiscordMessage
+eventToMessage event =
+  DiscordMessage
+    { content = Nothing,
+      tts = Just False,
+      embeds =
+        Just
+          [ Embed
+              { title = Just $ T.pack name,
+                description = Nothing,
+                url = Just $ baseUrl <> T.pack link,
+                timestamp = Nothing,
+                color = Just 0xDA251D, -- Silicon Hill's red
+                footer = Just (EmbedFooter "Fotogalerie Sillicon Hillu" Nothing Nothing),
+                image = Just (EmbedImage (baseUrl <> T.pack image) Nothing Nothing Nothing),
+                thumbnail = Nothing,
+                author = Just (EmbedAuthor "Silicon Gallery" (Just baseUrl) Nothing Nothing),
+                fields = Nothing
+              }
+          ]
+    }
+  where
+    EventName name = event.name
+    EventLink link = event.link
+    EventImage image = event.image

@@ -1,3 +1,5 @@
+-- | Module responsible from loading application configuration
+-- from environment variables
 module EnvVars (AppConfig (..), readAppConfig) where
 
 import Control.Monad.Except (liftEither)
@@ -10,6 +12,7 @@ import System.Environment (lookupEnv)
 import Text.Read
 import Util (toOutcome)
 
+-- | Store all the application configuration
 data AppConfig = AppConfig
   { discordBotToken :: DiscordBotToken,
     discordChannelID :: DiscordChannelID,
@@ -19,6 +22,8 @@ data AppConfig = AppConfig
   }
   deriving (Show, Read, Eq)
 
+-- | Used to prefix all the environment variables
+-- to separate then from the environment
 prefix :: String
 prefix = "ALBUM_BOT_"
 
@@ -37,18 +42,25 @@ refreshDelayMinutesKey = prefix ++ "REFRESH_DELAY_MINUTES"
 postNLatestKey :: String
 postNLatestKey = prefix ++ "POST_N_LATEST"
 
+-- | Reads all the required environment variables
+-- If any is missing of is in an invalid format,
+-- an error is returned.
 readAppConfig :: OutcomeIO AppConfig
 readAppConfig = do
   discordBotToken <- liftIO $ lookupEnv discordBotTokenKey
   discordBotToken <- liftEither $ toOutcome (MissingEvironmentVariable discordBotTokenKey) discordBotToken
+
   discordChannelID <- liftIO $ lookupEnv discordChannelIDKey
   discordChannelID <- liftEither $ toOutcome (MissingEvironmentVariable discordChannelIDKey) discordChannelID
+
   storageFile <- liftIO $ lookupEnv storageFileKey
   storageFile <- liftEither $ toOutcome (MissingEvironmentVariable storageFileKey) storageFile
+
   let fileConfig = createConfig storageFile
   refreshDelayMinutes <- liftIO $ lookupEnv refreshDelayMinutesKey
   refreshDelayMinutes <- liftEither $ toOutcome (MissingEvironmentVariable refreshDelayMinutesKey) refreshDelayMinutes
   refreshDelayMinutes <- liftEither $ (\x -> toOutcome (CannotParseEnvironmentVariable refreshDelayMinutesKey x) (readIntMaybe x)) refreshDelayMinutes
+
   postNLatest <- liftIO $ lookupEnv postNLatestKey
   postNLatest <- liftEither $ toOutcome (MissingEvironmentVariable postNLatestKey) postNLatest
   postNLatest <- liftEither $ (\x -> toOutcome (CannotParseEnvironmentVariable postNLatestKey x) (readIntMaybe x)) postNLatest

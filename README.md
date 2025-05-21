@@ -4,6 +4,20 @@ A command line utility used to watch list of photo albums published
 by [Silicon Hill](https://www.siliconhill.cz/photogalleries)
 and send them to a Discord channel.
 
+## TODO
+
+- CI
+- docs
+
+## Usage
+
+Set and source environment variables according to `env_example`.
+`ALBUM_BOT_DISCORD_BOT_TOKEN` is a bot token obtained from Discord developer portal,
+`ALBUM_BOT_DISCORD_CHANNEL_ID` is a Discord channel ID to post into,
+`ALBUM_BOT_STORAGE_FILE` is a file name to store and read from already published photo albums,
+`ALBUM_BOT_REFRESH_DELAY_MINUTES` is a refresh delay in minutes after which the page is scraped again, and
+`ALBUM_BOT_POST_N_LATEST` is a number of latest photo albums to post, so the chats are not overflown.
+
 ## Implementation milestones
 
 - read configuration from environment variables
