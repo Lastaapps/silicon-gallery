@@ -19,5 +19,5 @@ RUN cabal build --only-dependencies -j4
 COPY . /opt/silicon-gallery
 RUN cabal install
 
-CMD ["silicon-gallery"]
+ENTRYPOINT ["silicon-gallery"]
 

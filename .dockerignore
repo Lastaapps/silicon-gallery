@@ -1,0 +1,10 @@
+*
+!app
+!LICENSE
+!package.yaml
+!README.md
+!silicon-gallery.cabal
+!src
+!stack.yaml
+!stack.yaml.lock
+!test

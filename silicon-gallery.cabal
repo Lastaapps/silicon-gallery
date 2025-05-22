@@ -1,0 +1,135 @@
+cabal-version: 2.2
+
+-- This file has been generated from package.yaml by hpack version 0.38.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           silicon-gallery
+version:        0.1.0.0
+synopsis:       Monitor published photo albums and post link to them to Discord
+description:    Please see the README on GitHub at <https://github.com/LastaApps/silicon-gallery#readme>
+category:       Web Scraping
+homepage:       https://github.com/LastaApps/silicon-gallery#readme
+bug-reports:    https://github.com/LastaApps/silicon-gallery/issues
+author:         Petr Laštovička
+maintainer:     krasik.peta@seznam.cz
+copyright:      2025 Petr Laštovička
+license:        GPL-3.0-only
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    LICENSE
+
+source-repository head
+  type: git
+  location: https://github.com/LastaApps/silicon-gallery
+
+library
+  exposed-modules:
+      Discord
+      DiscordModel
+      EnvVars
+      Error
+      FileStorage
+      Model
+      SHScraper
+      SiliconGallery
+      Util
+  other-modules:
+      Paths_silicon_gallery
+  autogen-modules:
+      Paths_silicon_gallery
+  hs-source-dirs:
+      src
+  default-extensions:
+      DuplicateRecordFields
+      MultiParamTypeClasses
+      NamedFieldPuns
+      OverloadedRecordDot
+      OverloadedStrings
+      RecordWildCards
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , bytestring
+    , containers
+    , directory
+    , http-client
+    , mtl
+    , random
+    , req
+    , scalpel
+    , text
+    , time
+  default-language: Haskell2010
+
+executable silicon-gallery
+  main-is: Main.hs
+  other-modules:
+      Paths_silicon_gallery
+  autogen-modules:
+      Paths_silicon_gallery
+  hs-source-dirs:
+      app
+  default-extensions:
+      DuplicateRecordFields
+      MultiParamTypeClasses
+      NamedFieldPuns
+      OverloadedRecordDot
+      OverloadedStrings
+      RecordWildCards
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , bytestring
+    , containers
+    , directory
+    , http-client
+    , mtl
+    , random
+    , req
+    , scalpel
+    , silicon-gallery
+    , text
+    , time
+  default-language: Haskell2010
+
+test-suite silicon-gallery-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      EnvVarsSpec
+      FileStorageSpec
+      SHScraperSpec
+      Paths_silicon_gallery
+  autogen-modules:
+      Paths_silicon_gallery
+  hs-source-dirs:
+      test
+  default-extensions:
+      DuplicateRecordFields
+      MultiParamTypeClasses
+      NamedFieldPuns
+      OverloadedRecordDot
+      OverloadedStrings
+      RecordWildCards
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -O0
+  build-depends:
+      QuickCheck
+    , aeson
+    , base >=4.7 && <5
+    , bytestring
+    , containers
+    , directory
+    , hspec
+    , http-client
+    , mtl
+    , random
+    , req
+    , scalpel
+    , silicon-gallery
+    , text
+    , time
+  default-language: Haskell2010
