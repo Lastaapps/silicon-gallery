@@ -3,7 +3,7 @@
 -- | This does not scale, but for our use case this is fine
 -- | The EventID is stored in the form of the event name along its ID,
 -- | e.g. 334-4-blokove-hry-ls25
-module FileStorage (FileConfig, createConfig, getPostedEvents, storePostedEvent) where
+module FileStorage (FileConfig, createConfig, getPostedEventIDs, storePostedEvent) where
 
 import Control.Monad.IO.Class (MonadIO (liftIO))
 import qualified Data.IntMap as Set
@@ -11,7 +11,7 @@ import qualified Data.List
 import Data.Set (Set, empty, fromList)
 import qualified Data.String as String
 import Error (Outcome, OutcomeIO)
-import Model (EventID (..))
+import Model (EventID (..), eventIDForFile, eventIDFromFile)
 import System.Directory
 
 newtype FileConfig = FileConfig {filepath :: String}
@@ -22,15 +22,15 @@ createConfig :: String -> FileConfig
 createConfig = FileConfig
 
 -- | Get all the posted event IDs from the file given
-getPostedEvents :: FileConfig -> OutcomeIO (Set EventID)
-getPostedEvents (FileConfig {filepath}) = do
+getPostedEventIDs :: FileConfig -> OutcomeIO (Set EventID)
+getPostedEventIDs (FileConfig {filepath}) = do
   mcontent <- liftIO $ readFileOrNothing filepath
   case mcontent of
     Nothing -> return empty
     Just content -> do
       let lines = String.lines content
       let valid = Data.List.filter (/= "") lines
-      return $ fromList $ fmap EventID valid
+      return $ fromList $ fmap eventIDFromFile valid
 
 -- | Read content of a file or
 -- return empty string if the file does not exit
@@ -43,7 +43,5 @@ readFileOrNothing filepath = do
 
 -- | Stores a posted event ID to a file
 storePostedEvent :: FileConfig -> EventID -> OutcomeIO ()
-storePostedEvent (FileConfig {filepath}) event = do
-  liftIO $ appendFile filepath $ id ++ "\n"
-  where
-    EventID id = event
+storePostedEvent (FileConfig {filepath}) eventID = do
+  liftIO . appendFile filepath $ eventIDForFile eventID ++ "\n"

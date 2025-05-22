@@ -19,8 +19,8 @@ import Discord
 import DiscordModel
 import EnvVars (AppConfig (..), readAppConfig)
 import Error (Error (ParseHtmlFailed), Outcome, OutcomeIO, errorMessage)
-import FileStorage (getPostedEvents, storePostedEvent)
-import Model (Event (..), EventImage (EventImage), EventLink (EventLink), EventName (EventName), toID)
+import FileStorage (getPostedEventIDs, storePostedEvent)
+import Model (Event (..), EventImage (EventImage), EventLink (EventLink), EventName (EventName))
 import SHScraper (scrapeWeb)
 
 -- | Main application entry point
@@ -36,19 +36,19 @@ mainImpl = do
   forever $ do
     liftIO $ putStrLn "Scraping web"
     events <- scrapeWeb
-    liftIO . putStrLn $ "Found " ++ show (length events) ++ " events"
+    liftIO . putStrLn $ "Found " ++ show (length events) ++ " events (limited to " ++ show config.postNLatest ++ ")"
     events <- pure $ L.take config.postNLatest events
     events <- pure $ Data.List.reverse events
 
-    postedIds <- getPostedEvents config.fileConfig
-    events <- pure $ L.filter (\event -> Data.Set.notMember (toID event) postedIds) events
+    postedIDs <- getPostedEventIDs config.fileConfig
+    events <- pure $ L.filter (\event -> Data.Set.notMember event.id postedIDs) events
 
     liftIO . putStrLn $ "Sending " ++ show (length events) ++ " new events..."
     forM_ events $ \event -> do
       liftIO . putStrLn $ "Sending message for " ++ show event
       sendDiscordMessage $ eventToMessage event
       liftIO . putStrLn $ "Message sent"
-      storePostedEvent config.fileConfig $ toID event
+      storePostedEvent config.fileConfig event.id
 
     liftIO . putStrLn $ "Done, sleeping for " ++ show config.refreshDelayMinutes ++ " minutes..."
     liftIO $ threadDelay (config.refreshDelayMinutes * 60 * 1000000)

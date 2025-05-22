@@ -1,15 +1,20 @@
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module ScraperSpec where
+module SHScraperSpec where
 
 import Control.Monad.Except (runExceptT)
 import Data.List
 import qualified Data.Map as Map
-import Error (Error (ParseHtmlFailed))
-import Model (Event (..), EventImage (EventImage), EventLink (EventLink), EventName (EventName))
+import qualified Data.Text as T
+import Error (Error (CannotParseEventID, ParseHtmlFailed, attemptedString))
+import Model (Event (..), EventID, EventImage (EventImage), EventLink (EventLink), EventName (EventName), eventIDFromFile, eventIDFromLink)
 import SHScraper (scrapeHtml, scrapeWeb)
 import Test.Hspec
+import Test.QuickCheck (Testable (property))
+
+eventID :: String -> EventID
+eventID = eventIDFromFile
 
 spec :: Spec
 spec = do
@@ -17,22 +22,26 @@ spec = do
     let baseRes =
           Right
             [ Event
-                { name = EventName "4. Blokové hry LS25",
+                { id = eventID "334-4-blokove-hry-ls25",
+                  name = EventName "4. Blokové hry LS25",
                   link = EventLink "/photogalleries/334-4-blokove-hry-ls25",
                   image = EventImage "/photogalleries/334/thumb_dscf9336exp.jpg"
                 },
               Event
-                { name = EventName "Výjezdní zasedání LS 25",
+                { id = eventID "333-vyjezdni-zasedani-ls-25",
+                  name = EventName "Výjezdní zasedání LS 25",
                   link = EventLink "/photogalleries/333-vyjezdni-zasedani-ls-25",
                   image = EventImage "/photogalleries/333/thumb_vyjezd33.jpg"
                 },
               Event
-                { name = EventName "Velikonoční párty B3",
+                { id = eventID "332-velikonocni-party-b3",
+                  name = EventName "Velikonoční párty B3",
                   link = EventLink "/photogalleries/332-velikonocni-party-b3",
                   image = EventImage "/photogalleries/332/thumb_thumb_20250416_022812_2.jpg"
                 },
               Event
-                { name = EventName "2. Blokové hry LS25",
+                { id = eventID "331-2-blokove-hry-ls25",
+                  name = EventName "2. Blokové hry LS25",
                   link = EventLink "/photogalleries/331-2-blokove-hry-ls25",
                   image = EventImage "/photogalleries/331/thumb_dscf8977.jpg"
                 }
@@ -41,15 +50,6 @@ spec = do
       scrapeHtml base `shouldBe` baseRes
     it "no styles" $ do
       scrapeHtml noStyles `shouldBe` baseRes
-    it "blank" $ do
-      scrapeHtml blank
-        `shouldBe` Right
-          [ Event
-              { name = EventName "",
-                link = EventLink "",
-                image = EventImage ""
-              }
-          ]
     it "empty" $ do
       scrapeHtml empty
         `shouldBe` Right []
@@ -59,6 +59,7 @@ spec = do
         Left err -> fail (show err)
         Right res -> do
           res `shouldSatisfy` (\x -> Data.List.length x >= 305)
+    -- Use `xit` to skip the test
     it "live data" $ do
       scraped <- runExceptT scrapeWeb
       case scraped of
@@ -79,6 +80,21 @@ spec = do
     it "random" $ do
       let text = "lorem ipsum dolor sit amet consectetur adipiscing elit"
       scrapeHtml text `shouldBe` Left (ParseHtmlFailed (Just text))
+    it "blank" $ do
+      scrapeHtml blank
+        `shouldBe` Left CannotParseEventID {attemptedString = ""}
+  describe "event ids" $ do
+    it "valid link" $ do
+      let base = "334-4-blokove-hry-ls25"
+      let link = "/photogalleries/" ++ base
+      eventIDFromLink (EventLink link) `shouldBe` Right (eventID base)
+    it "empty" $ do
+      let base = ""
+      let link = "/photogalleries/" ++ base
+      eventIDFromLink (EventLink link) `shouldBe` Left CannotParseEventID {attemptedString = T.pack link}
+    it "random event ids that need to fail" $ property $ \content -> do
+      eventIDFromLink (EventLink content)
+        `shouldBe` Left CannotParseEventID {attemptedString = T.pack content}
 
 base :: String
 base =

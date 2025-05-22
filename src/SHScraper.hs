@@ -7,7 +7,7 @@ import Control.Monad.Except (liftEither)
 import Control.Monad.IO.Class (MonadIO (liftIO))
 import qualified Data.List
 import Error (Error (ParseHtmlFailed), Outcome, OutcomeIO)
-import Model (Event (Event), EventImage (..), EventLink (..), EventName (..))
+import Model (Event (Event), EventImage (..), EventLink (..), EventName (..), eventIDFromLink)
 import Text.HTML.Scalpel
 import Util (toOutcome)
 
@@ -21,23 +21,30 @@ url = "http://www.siliconhill.cz/photogalleries"
 scrapeWeb :: OutcomeIO [Event]
 scrapeWeb = do
   content <- liftIO $ scrapeURL url content
-  liftEither $ toOutcome (ParseHtmlFailed Nothing) content
+  rawEvents <- liftEither $ toOutcome (ParseHtmlFailed Nothing) content
+  liftEither $ withIDs rawEvents
 
 scrapeHtml :: String -> Outcome [Event]
-scrapeHtml html =
-  toOutcome (ParseHtmlFailed (Just html)) (scrapeStringLike html content)
+scrapeHtml html = do
+  rawEvents <- toOutcome (ParseHtmlFailed (Just html)) (scrapeStringLike html content)
+  withIDs rawEvents
 
-content :: Scraper String [Event]
+withIDs :: [(EventName, EventLink, EventImage)] -> Outcome [Event]
+withIDs rawEvents = do
+  ids <- mapM (\(name, link, img) -> eventIDFromLink link) rawEvents
+  return $ zipWith (\id (name, link, img) -> Event id name link img) ids rawEvents
+
+content :: Scraper String [(EventName, EventLink, EventImage)]
 content = root
   where
-    root :: Scraper String [Event]
+    root :: Scraper String [(EventName, EventLink, EventImage)]
     root = chroot ("div" @: ["id" @= "content"] // "div" @: [hasClass "inner-content-full"]) events
 
-    events :: Scraper String [Event]
+    events :: Scraper String [(EventName, EventLink, EventImage)]
     events = chroots ("div" // "div") event
 
-    event :: Scraper String Event
-    event = Event <$> eventName <*> eventLink <*> eventImage
+    event :: Scraper String (EventName, EventLink, EventImage)
+    event = (,,) <$> eventName <*> eventLink <*> eventImage
 
     eventName :: Scraper String EventName
     eventName = fmap EventName $ text $ "div" // "div" // "a"

@@ -4,11 +4,6 @@ A command line utility used to watch list of photo albums published
 by [Silicon Hill](https://www.siliconhill.cz/photogalleries)
 and send them to a Discord channel.
 
-## TODO
-
-- CI
-- docs
-
 ## Usage
 
 Set and source environment variables according to `env_example`.
@@ -32,9 +27,9 @@ Set and source environment variables according to `env_example`.
 ## Notable Haskell features
 
 - Combined Monad types using `ExceptT`
-- Http requests using `req` library
-- Tests using `HSpec` and docs with `Haddock`
-- IO monad everywhere
+- Http requests using `req` library (self implemented rate limiting retry)
+- Tests using `HSpec` and `QuickCheck` and docs with `Haddock`
+- Hidden constructors (where it makes sense like `EventID`)
 - and more...
 
 ## Used Haskell language extensions
@@ -44,12 +39,12 @@ Set and source environment variables according to `env_example`.
 {-# LANGUAGE DeriveDataTypeable #-} -- Allows automatic derivation of the `Data` and `Typeable` type classes.
 {-# LANGUAGE DeriveGeneric #-}      -- Allows automatic derivation of the `Generic` type class.
 {-# LANGUAGE GADTs #-}              -- Extends Haskell's type system to allow Generalized Algebraic Data Types.
-{-# LANGUAGE OverloadedStrings #-}   -- Allows string literals to be interpreted as instances of `IsString`.
 {-# LANGUAGE RankNTypes #-}         -- Allows quantification of types at arbitrary positions (rank-N types).
 
 -- Enabled globally
 {-# LANGUAGE DuplicateRecordFields #-} -- Allows record fields with the same name in different data types.
 {-# LANGUAGE OverloadedRecordDot #-} -- Enables accessing record fields using the dot notation (e.g., `record.field`).
+{-# LANGUAGE OverloadedStrings #-}   -- Allows string literals to be interpreted as instances of `IsString`.
 {-# LANGUAGE RecordWildCards #-}     -- Allows all fields of a record to be brought into scope without listing them individually.
 {-# LANGUAGE NamedFieldPuns #-}      -- Allows pattern matching on specific record fields by name, even if others are present.
 {-# LANGUAGE MultiParamTypeClasses #-} -- Enables type classes to have more than one type parameter.
