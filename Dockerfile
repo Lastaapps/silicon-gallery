@@ -1,7 +1,7 @@
 # This file is "complex" just to support dependencies caching,
 # which I want on my RPi
 # `stack` cannot be used as it does not support ARM64
-FROM haskell:9-slim
+FROM haskell:9.8.4-slim
 
 WORKDIR /opt/silicon-gallery
 

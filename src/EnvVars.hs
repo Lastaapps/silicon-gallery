@@ -48,21 +48,21 @@ postNLatestKey = prefix ++ "POST_N_LATEST"
 readAppConfig :: OutcomeIO AppConfig
 readAppConfig = do
   discordBotToken <- liftIO $ lookupEnv discordBotTokenKey
-  discordBotToken <- liftEither $ toOutcome (MissingEvironmentVariable discordBotTokenKey) discordBotToken
+  discordBotToken <- liftEither $ toOutcome (MissingEnvironmentVariable discordBotTokenKey) discordBotToken
 
   discordChannelID <- liftIO $ lookupEnv discordChannelIDKey
-  discordChannelID <- liftEither $ toOutcome (MissingEvironmentVariable discordChannelIDKey) discordChannelID
+  discordChannelID <- liftEither $ toOutcome (MissingEnvironmentVariable discordChannelIDKey) discordChannelID
 
   storageFile <- liftIO $ lookupEnv storageFileKey
-  storageFile <- liftEither $ toOutcome (MissingEvironmentVariable storageFileKey) storageFile
+  storageFile <- liftEither $ toOutcome (MissingEnvironmentVariable storageFileKey) storageFile
 
   let fileConfig = createConfig storageFile
   refreshDelayMinutes <- liftIO $ lookupEnv refreshDelayMinutesKey
-  refreshDelayMinutes <- liftEither $ toOutcome (MissingEvironmentVariable refreshDelayMinutesKey) refreshDelayMinutes
+  refreshDelayMinutes <- liftEither $ toOutcome (MissingEnvironmentVariable refreshDelayMinutesKey) refreshDelayMinutes
   refreshDelayMinutes <- liftEither $ (\x -> toOutcome (CannotParseEnvironmentVariable refreshDelayMinutesKey x) (readIntMaybe x)) refreshDelayMinutes
 
   postNLatest <- liftIO $ lookupEnv postNLatestKey
-  postNLatest <- liftEither $ toOutcome (MissingEvironmentVariable postNLatestKey) postNLatest
+  postNLatest <- liftEither $ toOutcome (MissingEnvironmentVariable postNLatestKey) postNLatest
   postNLatest <- liftEither $ (\x -> toOutcome (CannotParseEnvironmentVariable postNLatestKey x) (readIntMaybe x)) postNLatest
 
   return $

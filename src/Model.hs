@@ -1,6 +1,4 @@
-{-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE GADTs #-}
-{-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE RankNTypes #-}
 
 module Model
@@ -15,6 +13,7 @@ module Model
   )
 where
 
+import Consts (urlPhotogalleryPrefix)
 import Control.Monad (join, (<=<))
 import Data.Text as T
 import qualified Data.Text as Data.String
@@ -51,7 +50,7 @@ eventIDFromLink event = fmap EventID id
     id =
       toOutcome CannotParseEventID {attemptedString = T.pack link}
         . fmap T.unpack
-        . (takeNonEmtpy <=< T.stripPrefix "/photogalleries/")
+        . (takeNonEmtpy <=< T.stripPrefix (urlPhotogalleryPrefix <> "/"))
         . T.pack
         $ link
 

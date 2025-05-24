@@ -1,6 +1,3 @@
-{-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE OverloadedStrings #-}
-
 module SHScraperSpec where
 
 import Control.Monad.Except (runExceptT)

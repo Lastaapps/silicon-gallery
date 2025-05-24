@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module SiliconGallery (main) where
 
 import Control.Concurrent (threadDelay)
@@ -9,9 +7,8 @@ import Control.Monad.Except (liftEither, runExceptT)
 import Control.Monad.IO.Class (MonadIO (liftIO))
 import qualified Data.ByteString.Lazy
 import Data.Foldable
-import qualified Data.List
 import qualified Data.List as L
-import qualified Data.Set
+import qualified Data.Set as S
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as TE
 import qualified Data.Text.IO as TIO
@@ -38,10 +35,10 @@ mainImpl = do
     events <- scrapeWeb
     liftIO . putStrLn $ "Found " ++ show (length events) ++ " events (limited to " ++ show config.postNLatest ++ ")"
     events <- pure $ L.take config.postNLatest events
-    events <- pure $ Data.List.reverse events
+    events <- pure $ L.reverse events
 
     postedIDs <- getPostedEventIDs config.fileConfig
-    events <- pure $ L.filter (\event -> Data.Set.notMember event.id postedIDs) events
+    events <- pure $ L.filter (\event -> S.notMember event.id postedIDs) events
 
     liftIO . putStrLn $ "Sending " ++ show (length events) ++ " new events..."
     forM_ events $ \event -> do

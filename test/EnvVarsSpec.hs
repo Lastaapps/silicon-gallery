@@ -4,7 +4,7 @@ import Control.Monad.Except
 import Control.Monad.IO.Class (MonadIO (liftIO))
 import DiscordModel
 import EnvVars (AppConfig (..), readAppConfig)
-import Error (Error (CannotParseEnvironmentVariable, MissingEvironmentVariable, value, variableName))
+import Error (Error (CannotParseEnvironmentVariable, MissingEnvironmentVariable, value, variableName))
 import FileStorage
 import System.Environment (getEnv, lookupEnv, setEnv, unsetEnv)
 import System.Random
@@ -73,42 +73,42 @@ spec = do
       setupEnv
       setEnv keyDiscordBot ""
       config <- runExceptT readAppConfig
-      config `shouldBe` Left (MissingEvironmentVariable keyDiscordBot)
+      config `shouldBe` Left (MissingEnvironmentVariable keyDiscordBot)
     it "discord bot token none" $ do
       setupEnv
       unsetEnv keyDiscordBot
       config <- runExceptT readAppConfig
-      config `shouldBe` Left (MissingEvironmentVariable keyDiscordBot)
+      config `shouldBe` Left (MissingEnvironmentVariable keyDiscordBot)
     it "discord channel empty" $ do
       setupEnv
       setEnv keyDiscordChannel ""
       config <- runExceptT readAppConfig
-      config `shouldBe` Left (MissingEvironmentVariable keyDiscordChannel)
+      config `shouldBe` Left (MissingEnvironmentVariable keyDiscordChannel)
     it "discord channel none" $ do
       setupEnv
       unsetEnv keyDiscordChannel
       config <- runExceptT readAppConfig
-      config `shouldBe` Left (MissingEvironmentVariable keyDiscordChannel)
+      config `shouldBe` Left (MissingEnvironmentVariable keyDiscordChannel)
     it "storage file empty" $ do
       setupEnv
       setEnv keyStorageFile ""
       config <- runExceptT readAppConfig
-      config `shouldBe` Left (MissingEvironmentVariable keyStorageFile)
+      config `shouldBe` Left (MissingEnvironmentVariable keyStorageFile)
     it "storage file none" $ do
       setupEnv
       unsetEnv keyStorageFile
       config <- runExceptT readAppConfig
-      config `shouldBe` Left (MissingEvironmentVariable keyStorageFile)
+      config `shouldBe` Left (MissingEnvironmentVariable keyStorageFile)
     it "refresh delay empty" $ do
       setupEnv
       setEnv keyRefreshDelayMinutes ""
       config <- runExceptT readAppConfig
-      config `shouldBe` Left (MissingEvironmentVariable keyRefreshDelayMinutes)
+      config `shouldBe` Left (MissingEnvironmentVariable keyRefreshDelayMinutes)
     it "refresh delay none" $ do
       setupEnv
       unsetEnv keyRefreshDelayMinutes
       config <- runExceptT readAppConfig
-      config `shouldBe` Left (MissingEvironmentVariable keyRefreshDelayMinutes)
+      config `shouldBe` Left (MissingEnvironmentVariable keyRefreshDelayMinutes)
     it "refresh delay not int" $ do
       setupEnv
       let wrongValue = "no no no no no!!!"
@@ -125,12 +125,12 @@ spec = do
       setupEnv
       setEnv keyPostNLatest ""
       config <- runExceptT readAppConfig
-      config `shouldBe` Left (MissingEvironmentVariable keyPostNLatest)
+      config `shouldBe` Left (MissingEnvironmentVariable keyPostNLatest)
     it "post n latest none" $ do
       setupEnv
       unsetEnv keyPostNLatest
       config <- runExceptT readAppConfig
-      config `shouldBe` Left (MissingEvironmentVariable keyPostNLatest)
+      config `shouldBe` Left (MissingEnvironmentVariable keyPostNLatest)
     it "post n latest not int" $ do
       setupEnv
       let wrongValue = "no no no no no!!!"

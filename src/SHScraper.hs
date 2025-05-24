@@ -1,11 +1,10 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module SHScraper (scrapeWeb, scrapeHtml) where
 
+import Consts (baseUrlHttp, urlPhotogalleryPrefix)
 import Control.Applicative ((<|>))
 import Control.Monad.Except (liftEither)
 import Control.Monad.IO.Class (MonadIO (liftIO))
-import qualified Data.List
+import qualified Data.Text as T
 import Error (Error (ParseHtmlFailed), Outcome, OutcomeIO)
 import Model (Event (Event), EventImage (..), EventLink (..), EventName (..), eventIDFromLink)
 import Text.HTML.Scalpel
@@ -15,8 +14,8 @@ import Util (toOutcome)
 -- | does not support Extended Main Secret TLS extension
 -- | that Haskell http packages now requires
 -- | TODO try to overcome
-url :: String
-url = "http://www.siliconhill.cz/photogalleries"
+url :: URL -- Url = String
+url = T.unpack $ baseUrlHttp <> urlPhotogalleryPrefix
 
 scrapeWeb :: OutcomeIO [Event]
 scrapeWeb = do

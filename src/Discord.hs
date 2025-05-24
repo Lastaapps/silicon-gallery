@@ -1,8 +1,8 @@
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeApplications #-}
 
 module Discord (sendDiscordMessage, eventToMessage) where
 
+import qualified Consts (baseUrl, postsAuthor, postsFootnote, siliconHillRed)
 import Control.Arrow
 import Control.Concurrent (threadDelay)
 import Control.Exception (SomeException, throwIO, try)
@@ -82,9 +82,6 @@ handleRateLimitException config req resp = do
       -- If `X-RateLimit-Reset-After` header is missing, re-throw original exception
       throwIO $ VanillaHttpException (HttpExceptionRequest (error "Original request info lost") (StatusCodeException resp B.empty))
 
-baseUrl :: T.Text
-baseUrl = "https://www.siliconhill.cz"
-
 -- | Converts Event to `DiscordMessage`
 eventToMessage :: Model.Event -> DiscordMessage
 eventToMessage event =
@@ -96,13 +93,13 @@ eventToMessage event =
           [ Embed
               { title = Just $ T.pack name,
                 description = Nothing,
-                url = Just $ baseUrl <> T.pack link,
+                url = Just $ Consts.baseUrl <> T.pack link,
                 timestamp = Nothing,
-                color = Just 0xDA251D, -- Silicon Hill's red
-                footer = Just (EmbedFooter "Fotogalerie Sillicon Hillu" Nothing Nothing),
-                image = Just (EmbedImage (baseUrl <> T.pack image) Nothing Nothing Nothing),
+                color = Just Consts.siliconHillRed,
+                footer = Just (EmbedFooter Consts.postsFootnote Nothing Nothing),
+                image = Just (EmbedImage (Consts.baseUrl <> T.pack image) Nothing Nothing Nothing),
                 thumbnail = Nothing,
-                author = Just (EmbedAuthor "Silicon Gallery" (Just baseUrl) Nothing Nothing),
+                author = Just (EmbedAuthor Consts.postsAuthor (Just Consts.baseUrl) Nothing Nothing),
                 fields = Nothing
               }
           ]
